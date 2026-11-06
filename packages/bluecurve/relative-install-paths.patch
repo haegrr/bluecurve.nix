@@ -1,0 +1,47 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 129fe71..5ac10ef 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -12,7 +12,6 @@ pkg_check_modules(GTK3 gtk+-3.0)
+ if (NOT GTK3_FOUND)
+   message(FATAL_ERROR "GTK 3 development libraries were not found.")
+ endif()
+-pkg_get_variable(GTK3_PREFIX gtk+-3.0 prefix)
+ 
+ # Set up GTK 2
+ if (COMPILE_GTK2_ENGINE)
+@@ -21,7 +20,6 @@ if (COMPILE_GTK2_ENGINE)
+     message(FATAL_ERROR "GTK 2 development libraries were not found.")
+   endif()
+   pkg_get_variable(GTK2_BINARY_VERSION gtk+-2.0 gtk_binary_version)
+-  pkg_get_variable(GTK2_LIBDIR gtk+-2.0 libdir)
+ 
+   include_directories(${GTK2_INCLUDE_DIRS})
+   add_compile_options(${GTK2_CFLAGS_OTHER})
+@@ -40,7 +38,7 @@ if (COMPILE_GTK2_ENGINE)
+   target_link_libraries(bluecurve ${GTK2_LIBRARIES})
+ 
+   # Install GTK 2 engine
+-  install(TARGETS bluecurve LIBRARY DESTINATION ${GTK2_LIBDIR}/gtk-2.0/${GTK2_BINARY_VERSION}/engines)
++  install(TARGETS bluecurve LIBRARY DESTINATION lib/gtk-2.0/${GTK2_BINARY_VERSION}/engines)
+ endif()
+ 
+ # Set up icon symlinks
+@@ -65,7 +63,7 @@ set(ICON_DIRS
+   ${BUILD_ICONS_DIR}/LBluecurve-inverse
+ )
+ foreach(ICON ${ICON_DIRS})
+-  install(DIRECTORY ${ICON} DESTINATION ${GTK3_PREFIX}/share/icons)
++  install(DIRECTORY ${ICON} DESTINATION share/icons)
+ endforeach()
+ 
+ # Install GTK 2/3/4 theme files
+@@ -82,7 +80,7 @@ set(THEME_DIRS
+   themes/Bluecurve-Tangerine
+ )
+ foreach(THEME ${THEME_DIRS})
+-  install(DIRECTORY ${THEME} DESTINATION ${GTK3_PREFIX}/share/themes)
++  install(DIRECTORY ${THEME} DESTINATION share/themes)
+ endforeach()
+ 
+ 

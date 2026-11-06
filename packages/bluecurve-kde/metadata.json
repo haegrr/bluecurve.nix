@@ -1,0 +1,12 @@
+{
+  "KPackageStructure": "Plasma/LookAndFeel",
+  "KPlugin": {
+    "Description": "Red Hat Bluecurve theme",
+    "Id": "com.github.haegrr.bluecurve.desktop",
+    "License": "GPL-3.0-only",
+    "Name": "Bluecurve",
+    "Website": "https://github.com/haegrr/bluecurve.nix"
+  },
+  "Keywords": "Desktop;Workspace;Appearance;Look and Feel;",
+  "X-Plasma-APIVersion": "2"
+}

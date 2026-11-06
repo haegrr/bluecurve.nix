@@ -1,0 +1,17 @@
+[kdeglobals][KDE]
+widgetStyle=Bluecurve
+
+[kdeglobals][General]
+ColorScheme=Bluecurve
+
+[kdeglobals][Icons]
+Theme=Bluecurve
+
+[plasmarc][Theme]
+name=Bluecurve
+
+[kcminputrc][Mouse]
+cursorTheme=Bluecurve
+
+[kwinrc][org.kde.kdecoration2]
+library=com.github.neeeeow.bluecurve
