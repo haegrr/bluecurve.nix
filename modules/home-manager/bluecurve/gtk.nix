@@ -27,6 +27,8 @@ in
         name = "Luxi Sans";
         size = cfg.fonts.size;
       };
+
+      gtk4.theme = lib.mkDefault null;
     };
   };
 }
