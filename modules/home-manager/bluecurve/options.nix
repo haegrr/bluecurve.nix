@@ -8,69 +8,79 @@
 let
   cfg = config.bluecurve;
   flakePackages = mkFlakePackages pkgs;
-  gtkOptions = {
-    options = {
-      enable = lib.mkEnableOption "bluecurve.gtk";
-      package = lib.mkPackageOption flakePackages "bluecurve" { };
-    };
-  };
-  mateOptions = {
-    options = {
-      enable = lib.mkEnableOption "bluecurve.mate";
-    };
-  };
-  fontsOptions = {
-    options = {
-      enable = lib.mkEnableOption "bluecurve.fonts";
-      size = lib.mkOption {
-        type = lib.types.ints.positive;
-        default = 10;
-        description = "Point size for Bluecurve UI fonts.";
-      };
-    };
-  };
-  qtOptions = {
-    options = {
-      enable = lib.mkEnableOption "bluecurve.qt";
-    };
-  };
-  kdeOptions = {
-    options = {
-      enable = lib.mkEnableOption "bluecurve.kde";
-    };
-  };
-  xfceOptions = {
-    options = {
-      enable = lib.mkEnableOption "bluecurve.xfce";
-    };
-  };
+  # Documents the mkDefault values set in `config` below.
+  anyDesktopText = "config.bluecurve.kde.enable || config.bluecurve.mate.enable || config.bluecurve.xfce.enable";
 in
 {
   options.bluecurve = {
-    enable = lib.mkEnableOption "bluecurve";
-
-    gtk = lib.mkOption {
-      type = lib.types.submodule gtkOptions;
+    enable = lib.mkEnableOption "Bluecurve's GTK, font, and Qt integration" // {
+      description = ''
+        Whether to enable Bluecurve's GTK, font, and Qt integration by default.
+        Desktop integrations (KDE, MATE, and Xfce) remain opt-in.
+      '';
     };
 
-    mate = lib.mkOption {
-      type = lib.types.submodule mateOptions;
+    gtk = {
+      enable = lib.mkEnableOption "Bluecurve GTK themes, icons, and cursors" // {
+        defaultText = lib.literalExpression "config.bluecurve.enable || ${anyDesktopText}";
+        description = ''
+          Whether to enable Bluecurve GTK themes, icons, and cursors.
+          Enabled by default when `bluecurve.enable` or any of the KDE, MATE,
+          or Xfce integrations is enabled.
+        '';
+      };
+      package = lib.mkPackageOption flakePackages "bluecurve" {
+        pkgsText = "bluecurve.packages.\${pkgs.stdenv.hostPlatform.system}";
+      };
     };
 
-    fonts = lib.mkOption {
-      type = lib.types.submodule fontsOptions;
+    fonts = {
+      enable = lib.mkEnableOption "Bluecurve's Luxi fonts" // {
+        defaultText = lib.literalExpression "config.bluecurve.enable || ${anyDesktopText}";
+        description = ''
+          Whether to install the Luxi fonts and enable fontconfig by default.
+          Also selects these fonts in enabled GTK and desktop integrations.
+          Enabled by default when `bluecurve.enable` or any desktop integration
+          is enabled. The font package requires allowing unfree packages.
+        '';
+      };
+      size = lib.mkOption {
+        type = lib.types.ints.positive;
+        default = 10;
+        example = 12;
+        description = "Point size for Bluecurve UI fonts.";
+      };
     };
 
-    qt = lib.mkOption {
-      type = lib.types.submodule qtOptions;
+    qt.enable = lib.mkEnableOption "Bluecurve styles for Qt 5 and Qt 6" // {
+      defaultText = lib.literalExpression "config.bluecurve.enable || config.bluecurve.kde.enable";
+      description = ''
+        Whether to install and select the Bluecurve styles for both Qt 5 and Qt 6.
+        Enabled by default when `bluecurve.enable` or `bluecurve.kde.enable`
+        is enabled.
+      '';
     };
 
-    kde = lib.mkOption {
-      type = lib.types.submodule kdeOptions;
+    kde.enable = lib.mkEnableOption "Bluecurve integration with KDE Plasma" // {
+      description = ''
+        Whether to configure Bluecurve's Plasma theme, window decorations,
+        icons, cursors, and color scheme. Also enables GTK, fonts, and Qt
+        by default.
+      '';
     };
 
-    xfce = lib.mkOption {
-      type = lib.types.submodule xfceOptions;
+    mate.enable = lib.mkEnableOption "Bluecurve integration with the MATE desktop" // {
+      description = ''
+        Whether to configure MATE's GTK, icon, cursor, and Marco window themes.
+        Also enables GTK and fonts by default.
+      '';
+    };
+
+    xfce.enable = lib.mkEnableOption "Bluecurve integration with the Xfce desktop" // {
+      description = ''
+        Whether to configure Xfce's GTK, icon, cursor, and Xfwm4 window themes.
+        Also enables GTK and fonts by default.
+      '';
     };
 
     variant = lib.mkOption {
@@ -85,6 +95,12 @@ in
         "Bluecurve-Tangerine"
       ];
       default = "Bluecurve";
+      example = "Bluecurve-Slate";
+      description = ''
+        Theme variant used for GTK and the MATE and Xfce window themes.
+        Icons, cursors, Qt styles, and the KDE Plasma theme retain the
+        standard Bluecurve appearance.
+      '';
     };
   };
 

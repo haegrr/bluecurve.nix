@@ -1,10 +1,12 @@
 <p align="center">
-  <img src="bluecurve-nix.png" alt="Bluecurve logo">
+  <img src="docs/content/assets/bluecurve-nix.png" alt="Bluecurve logo">
 </p>
 
 # Bluecurve for NixOS & Home Manager
 
 Packages and modules for theming with [Bluecurve](https://github.com/neeeeow/Bluecurve), [Bluecurve-Qt](https://github.com/neeeeow/Bluecurve-Qt) and [Bluecurve-KDE](https://github.com/neeeeow/Bluecurve-KDE).
+
+**[Documentation](https://docs.rtin.foo/bluecurve.nix/)** · [Getting started](https://docs.rtin.foo/bluecurve.nix/getting-started/) · [Options](https://docs.rtin.foo/bluecurve.nix/options/)
 
 ## Usage example
 
@@ -21,35 +23,22 @@ Packages and modules for theming with [Bluecurve](https://github.com/neeeeow/Blu
   };
 
   outputs = { nixpkgs, home-manager, bluecurve, ... }: {
-    nixosConfigurations.workstation = nixpkgs.lib.nixosSystem {
-      system = "aarch64-linux";
-
+    homeConfigurations.bob = home-manager.lib.homeManagerConfiguration {
+      pkgs = import nixpkgs {
+        system = "x86_64-linux";
+        config.allowUnfree = true; # Required for Luxi fonts.
+      };
       modules = [
-        home-manager.nixosModules.home-manager
+        bluecurve.homeModules.default
         {
-          nixpkgs.config.allowUnfree = true; # required for fonts
+          home.username = "bob";
+          home.homeDirectory = "/home/bob";
+          home.stateVersion = "26.05";
 
-          home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-
-          home-manager.users.bob = {
-            imports = [
-              bluecurve.homeModules.default
-            ];
-            home.stateVersion = "26.05";
-
-            bluecurve = {
-              enable = true;
-
-              # Individual setting defaults (when enable = true):
-              # gtk.enable = true;
-              # mate.enable = false;
-              # fonts.enable = true;
-              # fonts.size = 10;
-              # qt.enable = true;
-              # kde.enable = false;
-              # xfce.enable = false;
-            };
+          bluecurve = {
+            enable = true;
+            # fonts.enable = false; # Avoid the unfree font package.
+            # kde.enable = true;    # Desktop integrations are opt-in.
           };
         }
       ];

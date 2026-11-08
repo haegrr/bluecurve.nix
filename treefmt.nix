@@ -6,6 +6,7 @@ in
   runtimeInputs = with pkgs; [
     nixfmt
     keep-sorted
+    prettier
     yamlfmt
   ];
 
@@ -19,6 +20,16 @@ in
       keep-sorted = {
         command = "keep-sorted";
         includes = [ "*" ];
+      };
+
+      prettier = {
+        command = "prettier";
+        options = [ "--write" ];
+        includes = [
+          "*.css"
+          "*.html"
+          "*.js"
+        ];
       };
 
       yamlfmt =
