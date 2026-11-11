@@ -49,6 +49,12 @@
           ];
         };
 
+        nixosModules.default = {
+          imports = map importApply [
+            ./modules/nixos/bluecurve
+          ];
+        };
+
         formatter = allSystems (
           { pkgs, ... }:
           (pkgs.treefmt.evalConfig ./treefmt.nix).config.result

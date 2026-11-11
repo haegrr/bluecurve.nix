@@ -12,8 +12,10 @@ let
     in
     {
       flake = importFile ./flake.nix;
+      options = importFile ./options.nix;
 
       inherit (self.flake) mkFlake;
+      inherit (self.options) mkVariantOption mkFontSizeOption;
     }
   );
 in

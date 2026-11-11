@@ -1,4 +1,4 @@
-{ mkFlakePackages, ... }:
+{ flakeLib, mkFlakePackages, ... }:
 {
   lib,
   config,
@@ -43,12 +43,7 @@ in
           is enabled. The font package requires allowing unfree packages.
         '';
       };
-      size = lib.mkOption {
-        type = lib.types.ints.positive;
-        default = 10;
-        example = 12;
-        description = "Point size for Bluecurve UI fonts.";
-      };
+      size = flakeLib.mkFontSizeOption;
     };
 
     qt.enable = lib.mkEnableOption "Bluecurve styles for Qt 5 and Qt 6" // {
@@ -82,25 +77,11 @@ in
       '';
     };
 
-    variant = lib.mkOption {
-      type = lib.types.enum [
-        "Bluecurve"
-        "Bluecurve-BerriesAndCream"
-        "Bluecurve-Gnome"
-        "Bluecurve-Grape"
-        "Bluecurve-Lime"
-        "Bluecurve-Slate"
-        "Bluecurve-Strawberry"
-        "Bluecurve-Tangerine"
-      ];
-      default = "Bluecurve";
-      example = "Bluecurve-Slate";
-      description = ''
-        Theme variant used for GTK and the MATE and Xfce window themes.
-        Icons, cursors, Qt styles, and the KDE Plasma theme retain the
-        standard Bluecurve appearance.
-      '';
-    };
+    variant = flakeLib.mkVariantOption ''
+      Theme variant used for GTK and the MATE and Xfce window themes.
+      Icons, cursors, Qt styles, and the KDE Plasma theme retain the
+      standard Bluecurve appearance.
+    '';
   };
 
   config.bluecurve =

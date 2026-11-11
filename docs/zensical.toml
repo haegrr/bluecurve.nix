@@ -8,16 +8,21 @@ docs_dir = "content"
 extra_css = ["stylesheets/bluecurve.css"]
 nav = [
   { "Home" = "index.md" },
-  { "Getting started" = "getting-started.md" },
-  { "Configuration" = "configuration.md" },
-  { "Options" = "options.md" },
+  { "Home Manager" = [
+    "home-manager/index.md",
+    { "Options" = "options.md" },
+  ] },
+  { "NixOS" = [
+    "nixos/index.md",
+    { "Options" = "nixos-options.md" },
+  ] },
 ]
 
 [project.theme]
 custom_dir = "overrides"
 variant = "classic"
 font = false
-features = ["navigation.top", "search.highlight", "content.code.copy"]
+features = ["navigation.expand", "navigation.indexes", "navigation.top", "search.highlight", "content.code.copy"]
 
 [project.theme.palette]
 scheme = "default"
