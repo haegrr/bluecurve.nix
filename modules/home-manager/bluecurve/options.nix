@@ -8,7 +8,6 @@
 let
   cfg = config.bluecurve;
   flakePackages = mkFlakePackages pkgs;
-  # Documents the mkDefault values set in `config` below.
   anyDesktopText = "config.bluecurve.kde.enable || config.bluecurve.mate.enable || config.bluecurve.xfce.enable";
 in
 {
