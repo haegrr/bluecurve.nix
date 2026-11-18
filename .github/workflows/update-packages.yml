@@ -1,0 +1,66 @@
+name: Update packages
+
+on:
+  schedule:
+    - cron: "37 5 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency: update-packages
+
+jobs:
+  update:
+    name: ${{ matrix.package }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - package: bluecurve
+            version: stable
+          - package: bluecurve-qt
+            version: branch
+          - package: bluecurve-kde
+            version: branch
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: NixOS/nix-installer-action@v1
+      - name: Update package source
+        id: update
+        env:
+          PACKAGE: ${{ matrix.package }}
+          UPDATE_VERSION: ${{ matrix.version }}
+        run: |
+          message_file="$RUNNER_TEMP/commit-message"
+          printf '%s\n' "$PACKAGE: update source" > "$message_file"
+          nix run --inputs-from . nixpkgs#nix-update -- \
+            --flake "$PACKAGE" --version="$UPDATE_VERSION" \
+            --write-commit-message "$message_file"
+          {
+            printf 'title=%s\n' "$(head -n 1 "$message_file")"
+            printf 'message<<EOF\n%s\nEOF\n' "$(cat "$message_file")"
+          } >> "$GITHUB_OUTPUT"
+      - name: Create GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+      - name: Create or update pull request
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          sign-commits: true
+          branch: update-packages/${{ matrix.package }}
+          delete-branch: true
+          commit-message: ${{ steps.update.outputs.message }}
+          title: ${{ steps.update.outputs.title }}
+          body-path: ${{ runner.temp }}/commit-message
